@@ -12,7 +12,6 @@ IMG_NAME=`awk -F/ '{print $2}' ORIGIN_IMG.txt | sed -n "${num}p"`
 docker tag   $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 docker push  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 #docker rmi  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
-
 #echo  "  $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG"
 
 done
