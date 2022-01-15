@@ -1,0 +1,12 @@
+---
+- name: install lvs tools
+  hosts: 
+  - node75
+  tasks: 
+  - yum:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - php-fpm
+      - php
+      state: latest

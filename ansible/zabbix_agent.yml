@@ -1,0 +1,26 @@
+---
+- name: zabbix_agent dispose 
+  hosts: 
+  - node72
+  - node73
+  - node76
+  tasks:
+  - copy:
+      src: /linux-soft/2/lnmp_soft/zabbix-3.4.4.tar.gz
+      dest: /root/
+  - yum:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - gcc
+      - pcre-devel
+      - autoconf
+      state: latest
+  - user:
+      name: zabbix
+      shell: /sbin/nologin
+  - service:
+      name: zabbix_agent.service
+      state: started
+      enabled: yes
+

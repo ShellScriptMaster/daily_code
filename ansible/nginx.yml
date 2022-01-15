@@ -1,0 +1,18 @@
+---
+- name: copy nginx
+  hosts: node75
+  tasks: 
+  - name: copy nginx file to destination 
+    copy:
+        src: /linux-soft/2/lnmp_soft.tar.gz
+        dest: /root/
+  - name: install tools
+    yum: 
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - pcre-devel
+      - openssl-devel
+      - gcc
+      - php-fpm
+      state: present
