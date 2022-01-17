@@ -1,5 +1,5 @@
 #!/b1in/bash
-
+#before you use this script ,you should be aware that if registry address have been modify
 #configure the imgages-registry
 if [ ! -d /etc/docker/ ];then
 mkdir /etc/docker
