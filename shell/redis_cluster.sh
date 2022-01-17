@@ -1,6 +1,19 @@
 #!/bin/bash
+#test whether redis had been installed 
+redis-cli --version 
+if [ ${?} !=0 ];then
+echo "redis had been installed"
+else
+echo -e "\033[35m redis had not been installed \033[0m"
+exit
+fi
+
 #shutdown the redis
-/etc/init.d/redis_6379 stop 
+INIT_port=`netstat -nulpt | grep redis | awk '{print $4}' | awk -F\: '{print $NF}'`
+if [ $? != 0 ];then
+redis-cli  -p 6379 -h 127.0.0.1 shutdown
+fi
+
 CONF=/etc/redis/6379.conf
 INIT=/etc/init.d/redis_6379
 #modify the redis config file /etc/redis/6379.conf
