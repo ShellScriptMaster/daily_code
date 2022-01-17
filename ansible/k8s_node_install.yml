@@ -1,0 +1,80 @@
+---
+- name: 
+  hosts: 
+  - k8s_node
+  vars:
+    master: '192.168.4.80:6443'
+    token: '5et38u.4a9tz5fv97jy381g'
+    token_hash: 'sha256:2d6ae785b968c4c7231346ea29dcbb5ee4016cbcad99133d2bca8818b3f019a5'
+  tasks: 
+  - name: remove iptables firewalld 
+    yum:
+      name: 
+      - firewalld-filesystem 
+      - firewalld
+      state: absent
+  - name: disable swap
+    lineinfile:
+      path: /etc/fstab
+      regexp: "swap"
+      state: absent
+    notify: disabled swap
+  - name: ensure  selinux  is set to disabled mode
+    lineinfile: 
+      path: /etc/selinux/config
+      regexp: '^SELINUX='
+      line: SELINUX=disabled
+    notify: disable selinux
+  - name: install k8s tools 
+    yum: 
+      name:
+      - kubeadm
+      - kubelet
+      - docker-ce
+      - ipvsadm
+      - ipset
+      state: present
+      update_cache: yes
+  - name: point out the registry
+    file:
+      path: /etc/docker
+      state: directory
+      mode: '0755'
+  - name: copy /etc/hosts
+    copy: 
+      src: /etc/hosts
+      dest: /etc/hosts
+      mode: '0644'
+  - name: copy /etc/docker/daemon.json
+    copy: 
+      src: /etc/docker/daemon.json
+      dest: /etc/docker/daemon.json
+      mode: '0644'
+  - name: enable net_bridge for iptables and ip6tables, enable ip_forward
+    copy: 
+      src: /etc/sysctl.d/k8s.conf
+      dest: /etc/sysctl.d/
+      mode: '0644'
+    notify: load module
+  - name: start docker and kubelet 
+    service:
+      name: "{{ item }}"
+      state: started
+      enabled: yes
+    with_items:
+    - docker
+    - kubelet
+  - name: check node state
+    stat: 
+      path: /etc/kubernetes/kubelet.conf
+    register: result
+  - name: node join 
+    shell: kubeadm join '{{ master }}' --token '{{ token }}'  --discovery-token-ca-cert-hash '{{ token_hash }}'
+    when: result.stat.exists == False
+  handlers:
+  - name: disabled swap
+    shell: swapoff -a 
+  - name: disable selinux
+    shell: setenforece 0
+  - name: load module
+    shell: sysctl --system
