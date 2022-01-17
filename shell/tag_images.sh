@@ -42,3 +42,4 @@ docker push  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 done
 
 rm -rf ORIGIN_IMG.txt ORIGIN_TAG.txt IMG_NAME.txt
+curl $REPO_PORT/v2/_catalog
