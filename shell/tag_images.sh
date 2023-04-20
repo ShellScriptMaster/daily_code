@@ -22,14 +22,14 @@ systemctl enable docker
 
 Exists=`docker images | awk 'NR==2{print $1}'`
 if [ -z ${Exists} ];then
-docker images
 echo -e '\033[31m there is no images, Start loading images \033[0m'
+docker images
 for images in ${img_path}/*.tar.gz
 do
 docker load -i ${images}
 done
 else
-  echo -e '\033[31m we have images now , no need to loading images\033[0m'
+  echo -e '\033[33m we have images now , no need to loading images\033[0m'
   docker images
 fi
 
@@ -45,11 +45,10 @@ ORIGIN_IMG=`sed  -n  "${num}p"  ORIGIN_IMG.txt`
 ORIGIN_TAG=`sed  -n  "${num}p"  ORIGIN_TAG.txt`
 IMG_NAME=`sed -n "${num}p" IMG_NAME.txt`
 
-docker tag   $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
+docker tag   ${ORIGIN_IMG}:${ORIGIN_TAG}  ${REPO_PORT}/${IMG_NAME}:${ORIGIN_TAG}
 
-docker push  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
-
-
+docker push  ${REPO_PORT}/${IMG_NAME}:${ORIGIN_TAG}
+docker rmi k8s.gcr.io/${IMG_NAME}
 #docker rmi  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 #echo  "  $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG"
 
