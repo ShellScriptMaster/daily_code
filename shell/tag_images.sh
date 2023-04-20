@@ -15,16 +15,22 @@ sed -i  '$a\\t"insecure-registries":["'"${docker_harbor}"'","registry:5000"]' ${
 # quote var need to use '"${var}"' in sed
 echo } >> ${file}
 sed  -i '/exec-opt/d'  /lib/systemd/system/docker.service
+systemctl daemon-reload
 systemctl restart docker
 systemctl enable docker
 #load images to localhost
 
 Exists=`docker images | awk 'NR==2{print $1}'`
 if [ -z ${Exists} ];then
+docker images
+echo -e '\033[31m there is no images, Start loading images \033[0m'
 for images in ${img_path}/*.tar.gz
 do
 docker load -i ${images}
 done
+else
+  echo -e '\033[31m we have images now , no need to loading images\033[0m'
+  docker images
 fi
 
 #upload images to registry
@@ -43,7 +49,6 @@ docker tag   $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 
 docker push  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 
-docker rmi ${ORIGIN_IMG}:${ORIGIN_TAG}
 
 #docker rmi  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 #echo  "  $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG"
