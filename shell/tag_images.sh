@@ -1,6 +1,5 @@
 #!/bin/bash
 read -p 'input the docker-distribution ip  ' docker_harbor
-read -p 'where is your images  ' img_path
 #start up docker
 
 
@@ -11,7 +10,7 @@ file=/etc/docker/daemon.json
 echo { > ${file}
 sed -i '$a\\t"exec-opts":["native.cgroupdriver=systemd"],' ${file}
 sed -i '$a\\t"registry-mirrors":["https://hub-mirror.c.163.com"],' ${file}
-sed -i  '$a\\t"insecure-registries":["'"${docker_harbor}"'","registry:5000"]' ${file}
+sed -i  '$a\\t"insecure-registries":["'"${docker_harbor}"':5000","registry:5000"]' ${file}
 # quote var need to use '"${var}"' in sed
 echo } >> ${file}
 sed  -i '/exec-opt/d'  /lib/systemd/system/docker.service
@@ -24,6 +23,7 @@ Exists=`docker images | awk 'NR==2{print $1}'`
 if [ -z ${Exists} ];then
 echo -e '\033[31m there is no images, Start loading images \033[0m'
 docker images
+read -p 'where is your images  ' img_path
 for images in ${img_path}/*.tar.gz
 do
 docker load -i ${images}
