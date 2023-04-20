@@ -14,7 +14,7 @@ sed -i '$a\\t"registry-mirrors":["https://hub-mirror.c.163.com"],' ${file}
 sed -i  '$a\\t"insecure-registries":["'"${docker_harbor}"'","registry:5000"]' ${file}
 # quote var need to use '"${var}"' in sed
 echo } >> ${file}
-sed  '/exec-opt/d'  docker.service
+sed  -i '/exec-opt/d'  /lib/systemd/system/docker.service
 systemctl restart docker
 systemctl enable docker
 #load images to localhost
