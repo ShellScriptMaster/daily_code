@@ -2,7 +2,8 @@
 read -p 'input the docker-distribution ip  ' docker_harbor
 read -p 'where is your images  ' img_path
 #start up docker
-systemctl enable docker --now
+
+
 
 #configure registry
 file=/etc/docker/daemon.json
@@ -13,7 +14,9 @@ sed -i '$a\\t"registry-mirrors":["https://hub-mirror.c.163.com"],' ${file}
 sed -i  '$a\\t"insecure-registries":["'"${docker_harbor}"'","registry:5000"]' ${file}
 # quote var need to use '"${var}"' in sed
 echo } >> ${file}
-
+sed  '/exec-opt/d'  docker.service
+systemctl restart docker
+systemctl enable docker
 #load images to localhost
 
 Exists=`docker images | awk 'NR==2{print $1}'`
@@ -49,3 +52,8 @@ done
 
 rm -rf ORIGIN_IMG.txt ORIGIN_TAG.txt IMG_NAME.txt
 curl ${REPO_PORT}/v2/_catalog
+
+for img_name in `docker images | awk 'NR>1{print$1}' | awk -F/ '{print$2}'`
+do
+  curl ${REPO_PORT}/v2/${img_name}/tags/list
+done
