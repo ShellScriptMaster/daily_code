@@ -16,7 +16,7 @@ echo } >> ${file}
 
 #load images to localhost
 
-Exists=`docker images | awk "NR==2{print}"`
+Exists=`docker images | awk 'NR==2{print $1}'`
 if [ -z ${Exists} ];then
 for images in ${img_path}/*.tar.gz
 do
