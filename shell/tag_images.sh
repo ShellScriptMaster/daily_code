@@ -35,14 +35,12 @@ do
 ORIGIN_IMG=`sed  -n  "${num}p"  ORIGIN_IMG.txt`
 ORIGIN_TAG=`sed  -n  "${num}p"  ORIGIN_TAG.txt`
 IMG_NAME=`sed -n "${num}p" IMG_NAME.txt`
-#docker tag   $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
-echo   ${ORIGIN_IMG}:${ORIGIN_TAG} ${REPO_PORT}/${IMG_NAME}:${ORIGIN_TAG}
 
-#docker push  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
-echo ${REPO_PORT}/${IMG_NAME}:${ORIGIN_TAG}
+docker tag   $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 
-#docker rmi ${ORIGIN_IMG}:${ORIGIN_TAG}
-echo ${ORIGIN_IMG}:${ORIGIN_TAG}
+docker push  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
+
+docker rmi ${ORIGIN_IMG}:${ORIGIN_TAG}
 
 #docker rmi  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG
 #echo  "  $ORIGIN_IMG:$ORIGIN_TAG  $REPO_PORT/$IMG_NAME:$ORIGIN_TAG"
