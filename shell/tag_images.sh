@@ -25,7 +25,7 @@ done
 fi
 
 #upload images to registry
-REPO_PORT="${img_path}:5000"
+REPO_PORT="${docker_harbor}:5000"
 docker images | awk 'NR>1{print$1}'  >> ORIGIN_IMG.txt
 docker images | awk 'NR>1{print$2}'  >> ORIGIN_TAG.txt
 awk -F/ '{print $2}'   ORIGIN_IMG.txt >> IMG_NAME.txt
