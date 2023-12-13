@@ -1,4 +1,4 @@
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
 - groups:
   - system:bootstrappers:kubeadm:default-node-token
@@ -12,15 +12,15 @@ localAPIEndpoint:
   advertiseAddress: 192.168.4.20
   bindPort: 6443
 nodeRegistration:
-  criSocket: /var/run/docker.sock
-  name: master20
+  criSocket: /var/run/dockershim.sock
+  name: master
   taints:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
 ---
 apiServer:
   timeoutForControlPlane: 4m0s
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
 controllerManager: {}
@@ -29,15 +29,17 @@ dns:
 etcd:
   local:
     dataDir: /var/lib/etcd
-imageRepository: 192.168.4.120:5000
+imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers/
 kind: ClusterConfiguration
-kubernetesVersion: v1.17.6
+kubernetesVersion: v1.19.0
 networking:
   dnsDomain: cluster.local
   podSubnet: 10.244.0.0/16
-  serviceSubnet: 10.254.0.0/16
+  serviceSubnet: 10.96.0.0/12
 scheduler: {}
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
+featureGates:
+  SupportIPVSProxyMode: true
 mode: ipvs
